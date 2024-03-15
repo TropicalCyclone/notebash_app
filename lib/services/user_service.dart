@@ -11,7 +11,7 @@ class UserService {
     if (await _isAlreadyExist(user.username)) {
       return ActionResult<User>(
         success: false,
-        message: 'Username already exist',
+        message: 'User already exist',
       );
     }
 

@@ -15,8 +15,7 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  final TextEditingController _confirmController = TextEditingController();
 
   String _errorMessage = '';
   late UserService _service;
@@ -25,12 +24,29 @@ class _RegisterPageState extends State<RegisterPage> {
   void initState() {
     super.initState();
     _service = UserService(db: widget._db);
+    _clearForm();
   }
 
-  Future<User> addUser() async {
+  Future<void> _register() async {
+    if (_usernameController.text.isEmpty ||
+        _passwordController.text.isEmpty ||
+        _confirmController.text.isEmpty) {
+      setState(() {
+        _errorMessage = 'Please fill all fields';
+      });
+      return;
+    }
+
+    if (_confirmController.text != _passwordController.text) {
+      setState(() {
+        _errorMessage = 'Password not match';
+      });
+      return;
+    }
+
     User user = User(
       username: _usernameController.text,
-      password: _confirmPasswordController.text,
+      password: _passwordController.text,
     );
 
     final result = await _service.register(user);
@@ -39,9 +55,11 @@ class _RegisterPageState extends State<RegisterPage> {
       await _alertDialog();
       _clearForm();
       _back();
+    } else {
+      setState(() {
+        _errorMessage = result.message!;
+      });
     }
-
-    return result.data!;
   }
 
   Future _alertDialog() {
@@ -67,7 +85,7 @@ class _RegisterPageState extends State<RegisterPage> {
   void _clearForm() {
     _usernameController.clear();
     _passwordController.clear();
-    _confirmPasswordController.clear();
+    _confirmController.clear();
     _errorMessage = '';
 
     setState(() {});
@@ -80,224 +98,139 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        toolbarHeight: 200,
-        title: const Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-              child: Text(
-                'NoteBash',
-                style: TextStyle(
-                  fontFamily: '',
-                  color: Color(0xFF57636C),
-                  fontSize: 60,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            ),
-            Text(
-              'Register',
-              style: TextStyle(
-                fontFamily: 'Plus Jakarta Sans',
-                color: Color(0xFF57636C),
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
       body: SingleChildScrollView(
-        physics: const NeverScrollableScrollPhysics(),
         child: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              if (_errorMessage.isNotEmpty)
-                Text(
-                  _errorMessage,
-                  style: const TextStyle(
-                    color: Colors.red,
-                    fontWeight: FontWeight.bold,
-                  ),
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Text(
+                  'Note Bash',
+                  style: Theme.of(context)
+                      .textTheme
+                      .displayMedium!
+                      .copyWith(color: Theme.of(context).colorScheme.primary),
                 ),
-              const SizedBox(height: 20.0),
-              TextFormField(
-                controller: _usernameController,
-                autofocus: true,
-                obscureText: false,
-                decoration: InputDecoration(
-                  labelText: 'Username',
-                  labelStyle: const TextStyle(
-                    fontFamily: 'Plus Jakarta Sans',
-                    color: Color(0xFF57636C),
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color(0xFFE0E3E7),
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(40),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color(0xFF4B39EF),
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(40),
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color(0xFFFF5963),
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(40),
-                  ),
-                  focusedErrorBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color(0xFFFF5963),
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(40),
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                  contentPadding: const EdgeInsets.all(24),
-                ),
-                style: const TextStyle(
-                  fontFamily: 'Plus Jakarta Sans',
-                  color: Color(0xFF101213),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-                keyboardType: TextInputType.emailAddress,
-                cursorColor: const Color(0xFF4B39EF),
+              ),
+              Center(
+                child: Text('Register',
+                    style: Theme.of(context).textTheme.bodyLarge),
               ),
               const SizedBox(height: 20.0),
-              TextFormField(
+              Text(
+                "Username",
+                style: Theme.of(context).textTheme.bodyMedium,
+                textAlign: TextAlign.left,
+              ),
+              const SizedBox(height: 10.0),
+              TextField(
+                controller: _usernameController,
+                decoration: InputDecoration(
+                  filled: true,
+                  hintText: 'Enter your username',
+                  suffixIcon: const Icon(Icons.person, size: 20),
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 4.0,
+                    horizontal: 12,
+                  ),
+                  fillColor: Theme.of(context).inputDecorationTheme.fillColor,
+                  border: const OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                  ),
+                ),
+                autofocus: true,
+              ),
+              const SizedBox(height: 10.0),
+              Text(
+                "Password",
+                style: Theme.of(context).textTheme.bodyMedium,
+                textAlign: TextAlign.left,
+              ),
+              const SizedBox(height: 10.0),
+              TextField(
                 controller: _passwordController,
                 obscureText: true,
-                autofocus: true,
                 decoration: InputDecoration(
-                  labelText: 'Password',
-                  labelStyle: const TextStyle(
-                    fontFamily: 'Plus Jakarta Sans',
-                    color: Color(0xFF57636C),
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color(0xFFE0E3E7),
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(40),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color(0xFF4B39EF),
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(40),
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color(0xFFFF5963),
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(40),
-                  ),
-                  focusedErrorBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color(0xFFFF5963),
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(40),
-                  ),
                   filled: true,
-                  fillColor: Colors.white,
-                  contentPadding: const EdgeInsets.all(24),
+                  hintText: 'Enter your password',
+                  suffixIcon: const Icon(Icons.lock, size: 20),
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 4.0,
+                    horizontal: 12,
+                  ),
+                  fillColor: Theme.of(context).inputDecorationTheme.fillColor,
+                  border: const OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                  ),
                 ),
-                style: const TextStyle(
-                  fontFamily: 'Plus Jakarta Sans',
-                  color: Color(0xFF101213),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-                keyboardType: TextInputType.emailAddress,
-                cursorColor: const Color(0xFF4B39EF),
               ),
-              const SizedBox(height: 20.0),
-              TextFormField(
-                controller: _confirmPasswordController,
+              const SizedBox(height: 10.0),
+              Text(
+                "Confirm Password",
+                style: Theme.of(context).textTheme.bodyMedium,
+                textAlign: TextAlign.left,
+              ),
+              const SizedBox(height: 10.0),
+              TextField(
+                controller: _confirmController,
                 obscureText: true,
-                autofocus: true,
                 decoration: InputDecoration(
-                  labelText: 'Confirm Password',
-                  labelStyle: const TextStyle(
-                    fontFamily: 'Plus Jakarta Sans',
-                    color: Color(0xFF57636C),
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color(0xFFE0E3E7),
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(40),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color(0xFF4B39EF),
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(40),
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color(0xFFFF5963),
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(40),
-                  ),
-                  focusedErrorBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color(0xFFFF5963),
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(40),
-                  ),
                   filled: true,
-                  fillColor: Colors.white,
-                  contentPadding: const EdgeInsets.all(24),
+                  hintText: 'Confirm password',
+                  suffixIcon: const Icon(Icons.lock, size: 20),
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 4.0,
+                    horizontal: 12,
+                  ),
+                  fillColor: Theme.of(context).inputDecorationTheme.fillColor,
+                  border: const OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                  ),
                 ),
-                style: const TextStyle(
-                  fontFamily: 'Plus Jakarta Sans',
-                  color: Color(0xFF101213),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-                keyboardType: TextInputType.emailAddress,
-                cursorColor: const Color(0xFF4B39EF),
               ),
-              const SizedBox(height: 20.0),
-              ElevatedButton(
-                onPressed: () => addUser(),
-                child: const Text('Register'),
-              ),
+              const SizedBox(height: 40.0),
               TextButton(
-                onPressed: () {
-                  Navigator.pop(context); // Go back to login page
-                },
-                child: const Text('Back to Login'),
+                onPressed: () async => await _register(),
+                child: const SizedBox(
+                  width: double.infinity,
+                  child: Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Text(
+                      'Register',
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
               ),
+              if (_errorMessage.isNotEmpty)
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                    child: Text(
+                      _errorMessage,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium!
+                          .copyWith(color: Theme.of(context).colorScheme.error),
+                    ),
+                  ),
+                ),
+              const SizedBox(height: 40.0),
+              Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                OutlinedButton(
+                    onPressed: _back,
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide.none,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text('Back'))
+              ]),
             ],
           ),
         ),
