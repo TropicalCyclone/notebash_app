@@ -10,5 +10,8 @@ Future<Database> initDb() async {
     await db.execute(
       "CREATE TABLE users(id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, password TEXT);",
     );
+    await db.execute(
+      "CREATE TABLE logs(id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, log_date TEXT);",
+    );
   }, version: 1);
 }

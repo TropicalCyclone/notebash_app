@@ -36,27 +36,38 @@ class UserService {
     return users.isNotEmpty;
   }
 
-  Future<ActionResult<User>> login(String username, String password) {
-    return _getUserByUserName(username).then((user) {
-      if (user == null) {
-        return ActionResult<User>(
-          success: false,
-          message: 'User not found',
-        );
-      }
+  Future<ActionResult<User>> login(String username, String password) async {
+    final user = await _getUserByUserName(username);
 
-      if (user.password != password) {
-        return ActionResult<User>(
-          success: false,
-          message: 'Invalid password',
-        );
-      }
-
+    if (user == null) {
       return ActionResult<User>(
-        success: true,
-        data: user,
+        success: false,
+        message: 'User not found',
       );
-    });
+    }
+
+    if (user.password != password) {
+      return ActionResult<User>(
+        success: false,
+        message: 'Invalid password',
+      );
+    }
+
+    await _db.delete('logs');
+    await _db.insert(
+      'logs',
+      {
+        'id': 1,
+        'user_id': user.id,
+        'log_date': DateTime.now().toIso8601String(),
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+
+    return ActionResult<User>(
+      success: true,
+      data: user,
+    );
   }
 
   Future<User?> _getUserByUserName(String username) async {

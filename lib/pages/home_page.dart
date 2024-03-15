@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:intl/intl.dart';
 import 'package:notebash_app/models/note.dart';
+import 'package:notebash_app/services/log_service.dart';
 import 'package:notebash_app/services/note_service.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -21,12 +22,14 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<Note> _notes = [];
   late NoteService _service;
+  late LogService _logService;
 
   @override
   void initState() {
     super.initState();
     _notes = [];
     _service = NoteService(db: widget._db);
+    _logService = LogService(db: widget._db);
   }
 
   Future<void> _refreshNotes() async {
@@ -47,7 +50,7 @@ class _HomePageState extends State<HomePage> {
       if (result.success) {
         await _refreshNotes();
       } else {
-        showSnackBar(result.message!);
+        _showSnackBar(result.message!);
       }
     }
   }
@@ -60,18 +63,22 @@ class _HomePageState extends State<HomePage> {
     final result = await _service.export(widget.userId, folder);
 
     if (result.success) {
-      showSnackBar('File exported successfully to $folder/notes.json');
+      _showSnackBar('File exported successfully to $folder/notes.json');
     } else {
-      showSnackBar(result.message!);
+      _showSnackBar(result.message!);
     }
   }
 
-  void showSnackBar(String message) {
+  void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
       ),
     );
+  }
+
+  Future<void> _removeCurrentUser() async {
+    await _logService.delete(widget.userId);
   }
 
   void _showOptions(BuildContext context) {
@@ -119,6 +126,16 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
+    void backToLogin() {
+      Navigator.popUntil(context, (route) => route.isFirst);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => LoginPage(db: widget._db),
+        ),
+      );
+    }
+
     return FutureBuilder<void>(
       future: _refreshNotes(),
       builder: (context, snapshot) {
@@ -152,15 +169,9 @@ class _HomePageState extends State<HomePage> {
                         child: ListTile(
                           leading: const Icon(Icons.logout),
                           title: const Text('Logout'),
-                          onTap: () {
-                            Navigator.popUntil(
-                                context, (route) => route.isFirst);
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => LoginPage(db: widget._db),
-                              ),
-                            );
+                          onTap: () async {
+                            backToLogin();
+                            await _removeCurrentUser();
                           },
                         ),
                       ),
