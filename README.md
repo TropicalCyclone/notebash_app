@@ -1,16 +1,22 @@
-# notebash_app
+# NoteBash
 
-A new Flutter project.
+A simple app for note taking and task management.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- [x] Quick Notes
+      Enables you to quickly take notes
+- [ ] Tasks
+      Enables you to manage tasks and todo's
+- [ ] Movies
+      Enables you to manage movies you want to watch
+- [ ] Books
+      Enables you to manage books you want to read
+- [ ] Music
+      Enables you to manage music you want to listen to
+- [ ] Recipes
+      Enables you to manage recipes you want to try
+- [ ] Travel
+      Enables you to manage travel plans
+- [ ] Expenses
+      Enables you to manage expenses
