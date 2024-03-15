@@ -1,56 +1,53 @@
 import 'package:flutter/material.dart';
-import 'package:notebash_app/NotesDatabase.dart';
+import 'package:notebash_app/models/note.dart';
+import 'package:notebash_app/services/note_service.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class NoteEditScreen extends StatefulWidget {
   final int userId;
   final Note? note;
-  final bool isUpdating;
+  final Database _db;
 
-  NoteEditScreen({required this.userId, this.note, required this.isUpdating});
+  const NoteEditScreen(
+      {super.key, required this.userId, this.note, required Database db})
+      : _db = db;
 
   @override
-  _NoteEditScreenState createState() => _NoteEditScreenState();
+  State<NoteEditScreen> createState() => _NoteEditScreenState();
 }
 
 class _NoteEditScreenState extends State<NoteEditScreen> {
+  late NoteService _service;
   late TextEditingController _titleController;
   late TextEditingController _descriptionController;
 
   @override
   void initState() {
     super.initState();
-    _titleController =
-        TextEditingController(text: widget.note?.title ?? '');
+    _titleController = TextEditingController(text: widget.note?.title ?? '');
     _descriptionController =
         TextEditingController(text: widget.note?.description ?? '');
+
+    _service = NoteService(db: widget._db);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(60.0),
+        preferredSize: const Size.fromHeight(60.0),
         child: AppBar(
           title: TextField(
             controller: _titleController,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'Enter title',
               border: InputBorder.none,
             ),
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.black,
               fontSize: 20.0,
             ),
           ),
-          actions: [
-            if (widget.isUpdating)
-              IconButton(
-                icon: Icon(Icons.delete),
-                onPressed: () {
-                  _showDeleteConfirmationDialog(context);
-                },
-              ),
-          ],
         ),
       ),
       body: Padding(
@@ -58,12 +55,12 @@ class _NoteEditScreenState extends State<NoteEditScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             Expanded(
               child: SingleChildScrollView(
                 child: TextField(
                   controller: _descriptionController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: 'Enter Note',
                     border: InputBorder.none,
                   ),
@@ -77,41 +74,41 @@ class _NoteEditScreenState extends State<NoteEditScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          if (widget.isUpdating) {
+          if (widget.note != null) {
             _updateNote();
           } else {
             _saveNote();
           }
         },
-        child: Icon(Icons.save),
+        child: const Icon(Icons.save),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
   void _saveNote() {
-    // Save note
-    final newNote = Note(
+    final note = Note(
       userId: widget.userId,
       title: _titleController.text,
       description: _descriptionController.text,
+      color: '#000000',
       dateCreated: DateTime.now(),
     );
-    NotesDatabase().insertNote(newNote);
+    _service.add(note);
     Navigator.pop(context);
   }
 
   void _updateNote() {
     if (widget.note != null) {
-      //print("updated note");
-      final updatedNote = Note(
+      final note = Note(
         id: widget.note!.id,
         userId: widget.userId,
         title: _titleController.text,
         description: _descriptionController.text,
+        color: '#000000',
         dateCreated: DateTime.now(),
       );
-      NotesDatabase().updateNote(updatedNote);
+      _service.update(note);
       Navigator.pop(context);
     }
   }
@@ -121,20 +118,20 @@ class _NoteEditScreenState extends State<NoteEditScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Delete Note'),
-          content: Text('Are you sure you want to delete this note?'),
+          title: const Text('Delete Note'),
+          content: const Text('Are you sure you want to delete this note?'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
                 _deleteNoteAndNavigateBack();
               },
-              child: Text(
+              child: const Text(
                 'Delete',
                 style: TextStyle(color: Colors.red),
               ),
@@ -147,8 +144,7 @@ class _NoteEditScreenState extends State<NoteEditScreen> {
 
   void _deleteNoteAndNavigateBack() async {
     if (widget.note != null) {
-      await NotesDatabase().deleteNote(widget.note!);
-      Navigator.pop(context);
+      await _service.delete(widget.note!.id!);
       Navigator.pop(context);
     }
   }

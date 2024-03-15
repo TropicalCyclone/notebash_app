@@ -1,47 +1,48 @@
 import 'package:flutter/material.dart';
-import 'Notebash_Account_Database.dart';
+import 'package:notebash_app/services/user_service.dart';
+import 'package:sqflite/sqflite.dart';
 
-import 'User.dart';
+import '../models/user.dart';
 
 class RegisterPage extends StatefulWidget {
+  final Database _db;
+
+  const RegisterPage({super.key, required Database db}) : _db = db;
+
   @override
-  _RegisterPageState createState() => _RegisterPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
 class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
-  TextEditingController();
+      TextEditingController();
 
   String _errorMessage = '';
-  late NoteBashAccountDatabase accountDatabase;
+  late UserService _service;
 
   @override
   void initState() {
     super.initState();
-    accountDatabase = NoteBashAccountDatabase();
-    accountDatabase.initializeDB().whenComplete(() async {
-      setState(() {});
-    });
+    _service = UserService(db: widget._db);
   }
 
-  Future<int> addUser() async {
+  Future<User> addUser() async {
     User user = User(
       username: _usernameController.text,
       password: _confirmPasswordController.text,
     );
 
-    // Modify the insertAccount method to return the inserted ID
-    int insertedId = await accountDatabase.insertAccount(user);
+    final result = await _service.register(user);
 
-    if (insertedId > 0) {
+    if (result.success) {
       await alertDialog(context);
       clearForm();
-      Navigator.pop(context); // Close the register screen
+      Navigator.pop(context);
     }
 
-    return insertedId;
+    return result.data!;
   }
 
   Future alertDialog(BuildContext context) {
@@ -49,11 +50,11 @@ class _RegisterPageState extends State<RegisterPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Done'),
-          content: Text('Add Success'),
+          title: const Text('Done'),
+          content: const Text('Add Success'),
           actions: <Widget>[
             TextButton(
-              child: Text('Ok'),
+              child: const Text('Ok'),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -79,7 +80,7 @@ class _RegisterPageState extends State<RegisterPage> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         toolbarHeight: 200,
-        title: Column(
+        title: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
@@ -107,56 +108,56 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
       ),
       body: SingleChildScrollView(
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         child: Padding(
-          padding: EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(20.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               if (_errorMessage.isNotEmpty)
                 Text(
                   _errorMessage,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.red,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               TextFormField(
                 controller: _usernameController,
                 autofocus: true,
                 obscureText: false,
                 decoration: InputDecoration(
                   labelText: 'Username',
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                     fontFamily: 'Plus Jakarta Sans',
                     color: Color(0xFF57636C),
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Color(0xFFE0E3E7),
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(40),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Color(0xFF4B39EF),
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(40),
                   ),
                   errorBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Color(0xFFFF5963),
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(40),
                   ),
                   focusedErrorBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Color(0xFFFF5963),
                       width: 2,
                     ),
@@ -164,53 +165,53 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   filled: true,
                   fillColor: Colors.white,
-                  contentPadding: EdgeInsets.all(24),
+                  contentPadding: const EdgeInsets.all(24),
                 ),
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: 'Plus Jakarta Sans',
                   color: Color(0xFF101213),
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
                 keyboardType: TextInputType.emailAddress,
-                cursorColor: Color(0xFF4B39EF),
+                cursorColor: const Color(0xFF4B39EF),
               ),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               TextFormField(
                 controller: _passwordController,
                 obscureText: true,
                 autofocus: true,
                 decoration: InputDecoration(
                   labelText: 'Password',
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                     fontFamily: 'Plus Jakarta Sans',
                     color: Color(0xFF57636C),
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Color(0xFFE0E3E7),
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(40),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Color(0xFF4B39EF),
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(40),
                   ),
                   errorBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Color(0xFFFF5963),
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(40),
                   ),
                   focusedErrorBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Color(0xFFFF5963),
                       width: 2,
                     ),
@@ -218,53 +219,53 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   filled: true,
                   fillColor: Colors.white,
-                  contentPadding: EdgeInsets.all(24),
+                  contentPadding: const EdgeInsets.all(24),
                 ),
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: 'Plus Jakarta Sans',
                   color: Color(0xFF101213),
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
                 keyboardType: TextInputType.emailAddress,
-                cursorColor: Color(0xFF4B39EF),
+                cursorColor: const Color(0xFF4B39EF),
               ),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               TextFormField(
                 controller: _confirmPasswordController,
                 obscureText: true,
                 autofocus: true,
                 decoration: InputDecoration(
                   labelText: 'Confirm Password',
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                     fontFamily: 'Plus Jakarta Sans',
                     color: Color(0xFF57636C),
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Color(0xFFE0E3E7),
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(40),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Color(0xFF4B39EF),
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(40),
                   ),
                   errorBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Color(0xFFFF5963),
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(40),
                   ),
                   focusedErrorBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Color(0xFFFF5963),
                       width: 2,
                     ),
@@ -272,51 +273,27 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   filled: true,
                   fillColor: Colors.white,
-                  contentPadding: EdgeInsets.all(24),
+                  contentPadding: const EdgeInsets.all(24),
                 ),
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: 'Plus Jakarta Sans',
                   color: Color(0xFF101213),
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
                 keyboardType: TextInputType.emailAddress,
-                cursorColor: Color(0xFF4B39EF),
+                cursorColor: const Color(0xFF4B39EF),
               ),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               ElevatedButton(
-                onPressed: () async {
-                  String username = _usernameController.text;
-                  String password = _passwordController.text;
-                  String passwordConfirm = _confirmPasswordController.text;
-                  if (username.isNotEmpty &&
-                      password.isNotEmpty &&
-                      password == passwordConfirm) {
-                    NoteBashAccountDatabase database =
-                    NoteBashAccountDatabase(); // Create an instance
-                    bool usernameTaken = await database.isUsernameTaken(
-                        username); // Use instance to call method
-                    if (usernameTaken) {
-                      setState(() {
-                        _errorMessage = 'Username is already taken';
-                      });
-                    } else {
-                      addUser();
-                    }
-                  } else {
-                    setState(() {
-                      _errorMessage =
-                      'Please fill all fields and make sure passwords match';
-                    });
-                  }
-                },
-                child: Text('Register'),
+                onPressed: () => addUser(),
+                child: const Text('Register'),
               ),
               TextButton(
                 onPressed: () {
                   Navigator.pop(context); // Go back to login page
                 },
-                child: Text('Back to Login'),
+                child: const Text('Back to Login'),
               ),
             ],
           ),

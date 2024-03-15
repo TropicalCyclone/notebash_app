@@ -1,33 +1,55 @@
 import 'package:flutter/material.dart';
-import 'RegisterPage.dart';
-import 'Notebash_Account_Database.dart';
-import 'HomeScreen.dart';
+import 'package:notebash_app/services/user_service.dart';
+import 'package:sqflite/sqflite.dart';
+import 'register_page.dart';
+import 'home_page.dart';
 
 class LoginPage extends StatefulWidget {
+  final Database _db;
+
+  const LoginPage({super.key, required Database db}) : _db = db;
+
   @override
-  _LoginPageState createState() => _LoginPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
+  late UserService _service;
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   String _errorMessage = '';
-  bool _isDatabaseInitialized = false;
 
-  late NoteBashAccountDatabase accountDatabase;
   @override
   void initState() {
     super.initState();
-    initializeDatabase();
+    _service = UserService(db: widget._db);
   }
 
-  Future<void> initializeDatabase() async {
-    accountDatabase = NoteBashAccountDatabase();
-    await accountDatabase.initializeDB();
-    setState(() {
-      _isDatabaseInitialized = true;
-    });
+  login() async {
+    String username = _usernameController.text;
+    String password = _passwordController.text;
+
+    if (username.isEmpty || password.isEmpty) {
+      setState(() {
+        _errorMessage = 'Please fill all fields';
+      });
+      return;
+    }
+
+    final result = await _service.login(username, password);
+    if (result.success) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                HomeScreen(db: widget._db, userId: result.data!.id!)),
+      );
+    } else {
+      setState(() {
+        _errorMessage = result.message!;
+      });
+    }
   }
 
   @override
@@ -35,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 200,
-        title: Column(
+        title: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
@@ -63,16 +85,16 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
       body: SingleChildScrollView(
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         child: Padding(
-          padding: EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(20.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               if (_errorMessage.isNotEmpty)
                 Text(
                   _errorMessage,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.red,
                     fontWeight: FontWeight.bold,
                   ),
@@ -83,35 +105,35 @@ class _LoginPageState extends State<LoginPage> {
                 obscureText: false,
                 decoration: InputDecoration(
                   labelText: 'Username',
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                     fontFamily: 'Plus Jakarta Sans',
                     color: Color(0xFF57636C),
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Color(0xFFE0E3E7),
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(40),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Color(0xFF4B39EF),
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(40),
                   ),
                   errorBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Color(0xFFFF5963),
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(40),
                   ),
                   focusedErrorBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Color(0xFFFF5963),
                       width: 2,
                     ),
@@ -119,53 +141,53 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   filled: true,
                   fillColor: Colors.white,
-                  contentPadding: EdgeInsets.all(24),
+                  contentPadding: const EdgeInsets.all(24),
                 ),
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: 'Plus Jakarta Sans',
                   color: Color(0xFF101213),
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
                 keyboardType: TextInputType.emailAddress,
-                cursorColor: Color(0xFF4B39EF),
+                cursorColor: const Color(0xFF4B39EF),
               ),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               TextFormField(
                 controller: _passwordController,
                 obscureText: true,
                 autofocus: true,
                 decoration: InputDecoration(
                   labelText: 'Password',
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                     fontFamily: 'Plus Jakarta Sans',
                     color: Color(0xFF57636C),
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Color(0xFFE0E3E7),
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(40),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Color(0xFF4B39EF),
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(40),
                   ),
                   errorBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Color(0xFFFF5963),
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(40),
                   ),
                   focusedErrorBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Color(0xFFFF5963),
                       width: 2,
                     ),
@@ -173,67 +195,38 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   filled: true,
                   fillColor: Colors.white,
-                  contentPadding: EdgeInsets.all(24),
+                  contentPadding: const EdgeInsets.all(24),
                 ),
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: 'Plus Jakarta Sans',
                   color: Color(0xFF101213),
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
                 keyboardType: TextInputType.emailAddress,
-                cursorColor: Color(0xFF4B39EF),
+                cursorColor: const Color(0xFF4B39EF),
               ),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               ElevatedButton(
                 onPressed: () async {
                   login();
-                  },
-                child: Text('Login'),
+                },
+                child: const Text('Login'),
               ),
-
-
               TextButton(
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => RegisterPage()),
+                    MaterialPageRoute(
+                        builder: (context) => RegisterPage(db: widget._db)),
                   );
                 },
-                child: Text('Create an Account'),
+                child: const Text('Create an Account'),
               ),
             ],
           ),
         ),
       ),
     );
-  }
-  login() async {
-    if (!_isDatabaseInitialized) {
-      // Database not initialized yet, return or show error
-      print("Database is Not Initialized");
-      return;
-    }
-    String username = _usernameController.text;
-    String password = _passwordController.text;
-
-    if (username.isNotEmpty && password.isNotEmpty) {
-      bool valid = await accountDatabase.checkLogin(username, password);
-      if (valid) {
-        int userId = await accountDatabase.getUserId(username);
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomeScreen(userId: userId)),
-        );
-      } else {
-        setState(() {
-          _errorMessage = 'Invalid Username or Password';
-        });
-      }
-    } else {
-      setState(() {
-        _errorMessage = 'Please fill all fields';
-      });
-    }
   }
 }
