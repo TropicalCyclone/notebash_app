@@ -45,9 +45,23 @@ class _NoteBashAppState extends State<NoteBashApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Login/Register',
+      title: 'NoteBash',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+              fontFamily: "Plus Jakarta Sans",
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+              useMaterial3: true)
+          .copyWith(
+        textButtonTheme: TextButtonThemeData(
+          style: ButtonStyle(
+            shape: MaterialStateProperty.all(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            foregroundColor: MaterialStateProperty.all(Colors.white),
+            backgroundColor: MaterialStateProperty.all(Colors.blue),
+          ),
+        ),
       ),
       home: startPage!,
     );

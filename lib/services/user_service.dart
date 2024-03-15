@@ -49,7 +49,7 @@ class UserService {
     if (user.password != password) {
       return ActionResult<User>(
         success: false,
-        message: 'Invalid password',
+        message: 'Incorrect password',
       );
     }
 

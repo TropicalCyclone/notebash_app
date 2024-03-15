@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:notebash_app/services/user_service.dart';
 import 'package:sqflite/sqflite.dart';
 import 'register_page.dart';
@@ -57,174 +59,123 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 200,
-        title: const Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-              child: Text(
-                'NoteBash',
-                style: TextStyle(
-                  fontFamily: '',
-                  color: Color(0xFF57636C),
-                  fontSize: 60,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            ),
-            Text(
-              'Login',
-              style: TextStyle(
-                fontFamily: 'Plus Jakarta Sans',
-                color: Color(0xFF57636C),
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
       body: SingleChildScrollView(
-        physics: const NeverScrollableScrollPhysics(),
         child: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              if (_errorMessage.isNotEmpty)
-                Text(
-                  _errorMessage,
-                  style: const TextStyle(
-                    color: Colors.red,
-                    fontWeight: FontWeight.bold,
-                  ),
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Text(
+                  'Note Bash',
+                  style: Theme.of(context)
+                      .textTheme
+                      .displayMedium!
+                      .copyWith(color: Theme.of(context).colorScheme.primary),
                 ),
-              TextFormField(
-                controller: _usernameController,
-                autofocus: true,
-                obscureText: false,
-                decoration: InputDecoration(
-                  labelText: 'Username',
-                  labelStyle: const TextStyle(
-                    fontFamily: 'Plus Jakarta Sans',
-                    color: Color(0xFF57636C),
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color(0xFFE0E3E7),
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(40),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color(0xFF4B39EF),
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(40),
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color(0xFFFF5963),
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(40),
-                  ),
-                  focusedErrorBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color(0xFFFF5963),
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(40),
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                  contentPadding: const EdgeInsets.all(24),
-                ),
-                style: const TextStyle(
-                  fontFamily: 'Plus Jakarta Sans',
-                  color: Color(0xFF101213),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-                keyboardType: TextInputType.emailAddress,
-                cursorColor: const Color(0xFF4B39EF),
+              ),
+              Center(
+                child:
+                    Text('Login', style: Theme.of(context).textTheme.bodyLarge),
               ),
               const SizedBox(height: 20.0),
-              TextFormField(
+              Text(
+                "Username",
+                style: Theme.of(context).textTheme.bodyMedium,
+                textAlign: TextAlign.left,
+              ),
+              const SizedBox(height: 10.0),
+              TextField(
+                controller: _usernameController,
+                decoration: InputDecoration(
+                  filled: true,
+                  hintText: 'Enter your username',
+                  suffixIcon: const Icon(Icons.person, size: 20),
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 4.0,
+                    horizontal: 12,
+                  ),
+                  fillColor: Theme.of(context).inputDecorationTheme.fillColor,
+                  border: const OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                  ),
+                ),
+                autofocus: true,
+              ),
+              const SizedBox(height: 10.0),
+              Text(
+                "Password",
+                style: Theme.of(context).textTheme.bodyMedium,
+                textAlign: TextAlign.left,
+              ),
+              const SizedBox(height: 10.0),
+              TextField(
                 controller: _passwordController,
                 obscureText: true,
-                autofocus: true,
                 decoration: InputDecoration(
-                  labelText: 'Password',
-                  labelStyle: const TextStyle(
-                    fontFamily: 'Plus Jakarta Sans',
-                    color: Color(0xFF57636C),
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color(0xFFE0E3E7),
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(40),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color(0xFF4B39EF),
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(40),
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color(0xFFFF5963),
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(40),
-                  ),
-                  focusedErrorBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color(0xFFFF5963),
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(40),
-                  ),
                   filled: true,
-                  fillColor: Colors.white,
-                  contentPadding: const EdgeInsets.all(24),
+                  hintText: 'Enter your password',
+                  suffixIcon: const Icon(Icons.lock, size: 20),
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 4.0,
+                    horizontal: 12,
+                  ),
+                  fillColor: Theme.of(context).inputDecorationTheme.fillColor,
+                  border: const OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                  ),
                 ),
-                style: const TextStyle(
-                  fontFamily: 'Plus Jakarta Sans',
-                  color: Color(0xFF101213),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-                keyboardType: TextInputType.emailAddress,
-                cursorColor: const Color(0xFF4B39EF),
               ),
-              const SizedBox(height: 20.0),
-              ElevatedButton(
-                onPressed: () async {
-                  login();
-                },
-                child: const Text('Login'),
-              ),
+              const SizedBox(height: 40.0),
               TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => RegisterPage(db: widget._db)),
-                  );
-                },
-                child: const Text('Create an Account'),
+                onPressed: () async => await login(),
+                child: const SizedBox(
+                  width: double.infinity,
+                  child: Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Text(
+                      'Login',
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
               ),
+              if (_errorMessage.isNotEmpty)
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                    child: Text(
+                      _errorMessage,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium!
+                          .copyWith(color: Theme.of(context).colorScheme.error),
+                    ),
+                  ),
+                ),
+              const SizedBox(height: 40.0),
+              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                const Text("Don't have an account?"),
+                const SizedBox(width: 10.0),
+                OutlinedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RegisterPage(db: widget._db),
+                        ),
+                      );
+                    },
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide.none,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text('Register'))
+              ]),
             ],
           ),
         ),
