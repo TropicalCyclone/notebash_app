@@ -1,7 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:notebash_app/services/user_service.dart';
 import 'package:sqflite/sqflite.dart';
 import 'register_page.dart';
@@ -79,6 +77,28 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     return Scaffold(
+      appBar: AppBar(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              child: SvgPicture.asset("assets/images/bash.svg",
+                  colorFilter: ColorFilter.mode(
+                    Theme.of(context).colorScheme.primary,
+                    BlendMode.srcIn,
+                  ),
+                  semanticsLabel: "Logo"),
+            ),
+            const SizedBox(width: 5.0),
+            Text(
+              'NoteBash',
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0),
@@ -87,20 +107,18 @@ class _LoginPageState extends State<LoginPage> {
             children: [
               Center(
                 child: Text(
-                  'Note Bash',
-                  style: Theme.of(context)
-                      .textTheme
-                      .displayMedium!
-                      .copyWith(color: Theme.of(context).colorScheme.primary),
+                  'Welcome to NoteBash!',
+                  style: Theme.of(context).textTheme.titleLarge!,
                 ),
               ),
-              Center(
+              const SizedBox(height: 10.0),
+              const Center(
                 child: Text(
-                  'Login',
-                  style: Theme.of(context).textTheme.bodyLarge,
+                  'A simple app for note taking and task management.',
+                  textAlign: TextAlign.center,
                 ),
               ),
-              const SizedBox(height: 20.0),
+              const SizedBox(height: 30.0),
               Text(
                 "Username",
                 style: Theme.of(context).textTheme.bodyMedium,
@@ -156,7 +174,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: const SizedBox(
                   width: double.infinity,
                   child: Padding(
-                    padding: EdgeInsets.all(10.0),
+                    padding: EdgeInsets.all(10),
                     child: Text(
                       'Login',
                       textAlign: TextAlign.center,
@@ -178,19 +196,22 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               const SizedBox(height: 40.0),
-              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                const Text("Don't have an account?"),
-                const SizedBox(width: 10.0),
-                OutlinedButton(
-                    onPressed: () => register(),
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide.none,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("Don't have an account?"),
+                  const SizedBox(width: 10.0),
+                  OutlinedButton(
+                      onPressed: () => register(),
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide.none,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
-                    ),
-                    child: const Text('Register'))
-              ]),
+                      child: const Text('Register'))
+                ],
+              ),
             ],
           ),
         ),

@@ -1,12 +1,9 @@
-import 'dart:io';
-import 'package:intl/intl.dart';
-import 'package:notebash_app/models/note.dart';
-import 'package:notebash_app/services/log_service.dart';
-import 'package:notebash_app/services/note_service.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:notebash_app/components/home_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:notebash_app/pages/login_page.dart';
-import 'package:notebash_app/pages/note_page.dart';
+import 'package:notebash_app/pages/notes_page.dart';
+import 'package:notebash_app/services/log_service.dart';
 import 'package:sqflite/sqflite.dart';
 
 class HomePage extends StatefulWidget {
@@ -20,106 +17,16 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<Note> _notes = [];
-  late NoteService _service;
-  late LogService _logService;
+  late LogService _service;
 
   @override
   void initState() {
     super.initState();
-    _notes = [];
-    _service = NoteService(db: widget._db);
-    _logService = LogService(db: widget._db);
+    _service = LogService(db: widget._db);
   }
 
-  Future<void> _refreshNotes() async {
-    var notes = await _service.getByUserId(widget.userId);
-    _notes = notes;
-  }
-
-  Future<void> _importNote() async {
-    FilePickerResult? fileResult = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['json'],
-    );
-
-    if (fileResult != null) {
-      final file = File(fileResult.files.single.path!);
-      final contents = await file.readAsString();
-      final result = await _service.import(contents);
-      if (result.success) {
-        await _refreshNotes();
-      } else {
-        _showSnackBar(result.message!);
-      }
-    }
-  }
-
-  Future<void> _exportDatabase() async {
-    String? folder = await FilePicker.platform.getDirectoryPath();
-
-    if (folder == null) return;
-
-    final result = await _service.export(widget.userId, folder);
-
-    if (result.success) {
-      _showSnackBar('File exported successfully to $folder/notes.json');
-    } else {
-      _showSnackBar(result.message!);
-    }
-  }
-
-  void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-      ),
-    );
-  }
-
-  Future<void> _removeCurrentUser() async {
-    await _logService.delete(widget.userId);
-  }
-
-  void _showOptions(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext bc) {
-        return SafeArea(
-          child: Wrap(
-            children: <Widget>[
-              ListTile(
-                leading: const Icon(Icons.note),
-                title: const Text('Create New Note'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => NotePage(
-                        userId: widget.userId,
-                        db: widget._db,
-                      ),
-                    ),
-                  ).then((value) async {
-                    await _refreshNotes();
-                    setState(() {});
-                  });
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.import_export),
-                title: const Text('Import Note'),
-                onTap: () async {
-                  await _importNote();
-                  setState(() {});
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
+  Future<void> _logOutCurrentUser() async {
+    await _service.delete(widget.userId);
   }
 
   @override
@@ -136,90 +43,108 @@ class _HomePageState extends State<HomePage> {
       );
     }
 
-    return FutureBuilder<void>(
-      future: _refreshNotes(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Scaffold(
-            appBar: AppBar(
-              title: const Text('NoteBash'),
-            ),
-            body: Text(
-              'Loading...',
-              style: theme.textTheme.labelMedium,
-            ),
-          );
-        } else {
-          return Scaffold(
-            appBar: AppBar(
-              title: const Text('NoteBash'),
-              actions: <Widget>[
-                PopupMenuButton(
-                  icon: const Icon(Icons.menu),
-                  itemBuilder: (BuildContext context) {
-                    return [
-                      PopupMenuItem(
-                        child: ListTile(
-                          leading: const Icon(Icons.import_export),
-                          title: const Text('Export Database'),
-                          onTap: () async => await _exportDatabase(),
-                        ),
+    return Scaffold(
+      appBar: AppBar(
+          title: Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(width: 50.0),
+                SizedBox(
+                  child: SvgPicture.asset("assets/images/bash.svg",
+                      colorFilter: ColorFilter.mode(
+                        theme.colorScheme.primary,
+                        BlendMode.srcIn,
                       ),
-                      PopupMenuItem(
-                        child: ListTile(
-                          leading: const Icon(Icons.logout),
-                          title: const Text('Logout'),
-                          onTap: () async {
-                            backToLogin();
-                            await _removeCurrentUser();
-                          },
-                        ),
-                      ),
-                    ];
-                  },
+                      semanticsLabel: "Logo"),
+                ),
+                const SizedBox(width: 5.0),
+                Text(
+                  'NoteBash',
+                  style: theme.textTheme.titleLarge!.copyWith(
+                      color: theme.colorScheme.primary,
+                      fontWeight: FontWeight.bold),
                 ),
               ],
             ),
-            body: ListView.builder(
-              itemCount: _notes.length,
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => NotePage(
-                          userId: widget.userId,
-                          note: _notes[index],
-                          db: widget._db,
-                        ),
-                      ),
-                    ).then((value) async {
-                      await _refreshNotes();
-                      setState(() {});
-                    });
-                  },
-                  child: Card(
-                    margin: const EdgeInsets.all(8.0),
-                    child: ListTile(
-                      title: Text(_notes[index].description),
-                      subtitle: Text(
-                          DateFormat.yMMMd().format(_notes[index].dateCreated)),
-                    ),
+          ),
+          actions: [
+            IconButton(
+              onPressed: () async {
+                backToLogin();
+                await _logOutCurrentUser();
+              },
+              icon: const Icon(Icons.logout),
+            ),
+            const SizedBox(width: 10),
+          ]),
+      body: GridView.count(
+        padding: const EdgeInsets.all(14),
+        crossAxisCount: 2,
+        childAspectRatio: 0.90,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+        children: [
+          HomeIcon(
+            color: Colors.blue[400],
+            icon: "assets/images/pen.svg",
+            label: "Quick Notes",
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NotesPage(
+                    userId: widget.userId,
+                    db: widget._db,
                   ),
-                );
-              },
-            ),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () {
-                _showOptions(context);
-              },
-              child: const Icon(Icons.add),
-            ),
-            floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-          );
-        }
-      },
+                ),
+              );
+            },
+          ),
+          HomeIcon(
+            color: Colors.blue[500],
+            icon: "assets/images/task.svg",
+            label: "Tasks",
+            onTap: () => print("Tasks"),
+          ),
+          HomeIcon(
+            color: Colors.blue[600],
+            icon: "assets/images/clapper.svg",
+            label: "Movies",
+            onTap: () => print("Movies"),
+          ),
+          HomeIcon(
+            color: Colors.blue[700],
+            icon: "assets/images/book.svg",
+            label: "Books",
+            onTap: () => print("Books"),
+          ),
+          HomeIcon(
+            color: Colors.blue[800],
+            icon: "assets/images/music.svg",
+            label: "Musics",
+            onTap: () => print("Musics"),
+          ),
+          HomeIcon(
+            color: Colors.blue[900],
+            icon: "assets/images/chef.svg",
+            label: "Recipes",
+            onTap: () => print("Recipes"),
+          ),
+          HomeIcon(
+            color: const Color.fromRGBO(11, 61, 140, 1),
+            icon: "assets/images/plane.svg",
+            label: "Travels",
+            onTap: () => print("Travels"),
+          ),
+          HomeIcon(
+            color: const Color.fromRGBO(9, 47, 110, 1),
+            icon: "assets/images/coins.svg",
+            label: "Expenses",
+            onTap: () => print("Expenses"),
+          ),
+        ],
+      ),
     );
   }
 }

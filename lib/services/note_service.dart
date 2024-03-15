@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:notebash_app/models/action_result.dart';
 import 'package:notebash_app/models/note.dart';
 import 'package:sqflite/sqflite.dart';
