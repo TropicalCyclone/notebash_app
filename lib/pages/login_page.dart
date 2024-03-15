@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:notebash_app/services/user_service.dart';
 import 'package:sqflite/sqflite.dart';
@@ -25,10 +26,11 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
+    _clearForm();
     _service = UserService(db: widget._db);
   }
 
-  Future<void> login() async {
+  Future<void> _login() async {
     String username = _usernameController.text;
     String password = _passwordController.text;
 
@@ -41,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
 
     final result = await _service.login(username, password);
     if (result.success) {
-      openHomePage(result.data!.id!);
+      _openHomePage(result.data!.id!);
     } else {
       setState(() {
         _errorMessage = result.message!;
@@ -49,7 +51,15 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  void openHomePage(int userId) {
+  void _clearForm() {
+    _usernameController.clear();
+    _passwordController.clear();
+    setState(() {
+      _errorMessage = '';
+    });
+  }
+
+  void _openHomePage(int userId) {
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -58,6 +68,16 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    void register() {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => RegisterPage(db: widget._db),
+        ),
+      );
+      _clearForm();
+    }
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -75,8 +95,10 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               Center(
-                child:
-                    Text('Login', style: Theme.of(context).textTheme.bodyLarge),
+                child: Text(
+                  'Login',
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
               ),
               const SizedBox(height: 20.0),
               Text(
@@ -130,7 +152,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               const SizedBox(height: 40.0),
               TextButton(
-                onPressed: () async => await login(),
+                onPressed: () async => await _login(),
                 child: const SizedBox(
                   width: double.infinity,
                   child: Padding(
@@ -160,14 +182,7 @@ class _LoginPageState extends State<LoginPage> {
                 const Text("Don't have an account?"),
                 const SizedBox(width: 10.0),
                 OutlinedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => RegisterPage(db: widget._db),
-                        ),
-                      );
-                    },
+                    onPressed: () => register(),
                     style: OutlinedButton.styleFrom(
                       side: BorderSide.none,
                       shape: RoundedRectangleBorder(
