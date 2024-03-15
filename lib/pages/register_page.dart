@@ -67,8 +67,11 @@ class _RegisterPageState extends State<RegisterPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Done'),
-          content: const Text('Add Success'),
+          title: const Text('Register'),
+          content: const Text('You have successfully registered.'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
           actions: <Widget>[
             TextButton(
               child: const Text('Ok'),
@@ -98,26 +101,19 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Register'),
+        leading: IconButton(
+          onPressed: () => {Navigator.pop(context)},
+          icon: const Icon(Icons.chevron_left),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(
-                child: Text(
-                  'Note Bash',
-                  style: Theme.of(context)
-                      .textTheme
-                      .displayMedium!
-                      .copyWith(color: Theme.of(context).colorScheme.primary),
-                ),
-              ),
-              Center(
-                child: Text('Register',
-                    style: Theme.of(context).textTheme.bodyLarge),
-              ),
-              const SizedBox(height: 20.0),
               Text(
                 "Username",
                 style: Theme.of(context).textTheme.bodyMedium,
@@ -219,18 +215,6 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                   ),
                 ),
-              const SizedBox(height: 40.0),
-              Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                OutlinedButton(
-                    onPressed: _back,
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide.none,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: const Text('Back'))
-              ]),
             ],
           ),
         ),
