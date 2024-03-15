@@ -34,10 +34,6 @@ class Note {
     };
   }
 
-  String getStr() {
-    return "'id': $id, 'user_id': $userId, 'title': $title, 'description': $description, 'color': $color, 'date_created': $dateCreated";
-  }
-
   Note copy({
     int? id,
     int? userId,

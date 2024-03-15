@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:notebash_app/models/user.dart';
 import 'package:notebash_app/services/user_service.dart';
 import 'package:sqflite/sqflite.dart';
-
-import '../models/user.dart';
 
 class RegisterPage extends StatefulWidget {
   final Database _db;
@@ -37,15 +36,15 @@ class _RegisterPageState extends State<RegisterPage> {
     final result = await _service.register(user);
 
     if (result.success) {
-      await alertDialog(context);
-      clearForm();
-      Navigator.pop(context);
+      await _alertDialog();
+      _clearForm();
+      _back();
     }
 
     return result.data!;
   }
 
-  Future alertDialog(BuildContext context) {
+  Future _alertDialog() {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -65,13 +64,17 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  void clearForm() {
+  void _clearForm() {
     _usernameController.clear();
     _passwordController.clear();
     _confirmPasswordController.clear();
-    setState(() {
-      _errorMessage = '';
-    });
+    _errorMessage = '';
+
+    setState(() {});
+  }
+
+  void _back() {
+    Navigator.pop(context);
   }
 
   @override

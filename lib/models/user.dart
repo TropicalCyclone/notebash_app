@@ -14,10 +14,6 @@ class User {
     return {'username': username, 'password': password};
   }
 
-  String getStr() {
-    return "'username': $username, 'password': $password";
-  }
-
   User copy({int? id}) {
     return User(id: id ?? this.id, username: username, password: "");
   }

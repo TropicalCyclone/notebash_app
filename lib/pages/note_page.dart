@@ -3,20 +3,20 @@ import 'package:notebash_app/models/note.dart';
 import 'package:notebash_app/services/note_service.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-class NoteEditScreen extends StatefulWidget {
+class NotePage extends StatefulWidget {
   final int userId;
   final Note? note;
   final Database _db;
 
-  const NoteEditScreen(
+  const NotePage(
       {super.key, required this.userId, this.note, required Database db})
       : _db = db;
 
   @override
-  State<NoteEditScreen> createState() => _NoteEditScreenState();
+  State<NotePage> createState() => _NotePageState();
 }
 
-class _NoteEditScreenState extends State<NoteEditScreen> {
+class _NotePageState extends State<NotePage> {
   late NoteService _service;
   late TextEditingController _titleController;
   late TextEditingController _descriptionController;
@@ -73,11 +73,11 @@ class _NoteEditScreenState extends State<NoteEditScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
+        onPressed: () async {
           if (widget.note != null) {
-            _updateNote();
+            await _updateNote();
           } else {
-            _saveNote();
+            await _saveNote();
           }
         },
         child: const Icon(Icons.save),
@@ -86,7 +86,7 @@ class _NoteEditScreenState extends State<NoteEditScreen> {
     );
   }
 
-  void _saveNote() {
+  Future<void> _saveNote() async {
     final note = Note(
       userId: widget.userId,
       title: _titleController.text,
@@ -94,11 +94,11 @@ class _NoteEditScreenState extends State<NoteEditScreen> {
       color: '#000000',
       dateCreated: DateTime.now(),
     );
-    _service.add(note);
-    Navigator.pop(context);
+    await _service.add(note);
+    _back();
   }
 
-  void _updateNote() {
+  Future<void> _updateNote() async {
     if (widget.note != null) {
       final note = Note(
         id: widget.note!.id,
@@ -108,8 +108,8 @@ class _NoteEditScreenState extends State<NoteEditScreen> {
         color: '#000000',
         dateCreated: DateTime.now(),
       );
-      _service.update(note);
-      Navigator.pop(context);
+      await _service.update(note);
+      _back();
     }
   }
 
@@ -142,10 +142,14 @@ class _NoteEditScreenState extends State<NoteEditScreen> {
     );
   }
 
-  void _deleteNoteAndNavigateBack() async {
+  Future<void> _deleteNoteAndNavigateBack() async {
     if (widget.note != null) {
       await _service.delete(widget.note!.id!);
-      Navigator.pop(context);
+      _back();
     }
+  }
+
+  void _back() {
+    Navigator.pop(context);
   }
 }

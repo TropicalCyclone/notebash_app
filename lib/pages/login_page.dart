@@ -26,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
     _service = UserService(db: widget._db);
   }
 
-  login() async {
+  Future<void> login() async {
     String username = _usernameController.text;
     String password = _passwordController.text;
 
@@ -39,17 +39,19 @@ class _LoginPageState extends State<LoginPage> {
 
     final result = await _service.login(username, password);
     if (result.success) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                HomeScreen(db: widget._db, userId: result.data!.id!)),
-      );
+      openHomePage(result.data!.id!);
     } else {
       setState(() {
         _errorMessage = result.message!;
       });
     }
+  }
+
+  void openHomePage(int userId) {
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => HomePage(db: widget._db, userId: userId)));
   }
 
   @override

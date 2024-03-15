@@ -8,17 +8,17 @@ import 'package:notebash_app/pages/login_page.dart';
 import 'package:notebash_app/pages/note_page.dart';
 import 'package:sqflite/sqflite.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomePage extends StatefulWidget {
   final int userId;
   final Database _db;
 
-  const HomeScreen({super.key, required this.userId, required db}) : _db = db;
+  const HomePage({super.key, required this.userId, required db}) : _db = db;
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomePageState extends State<HomePage> {
   List<Note> _notes = [];
   late NoteService _service;
 
@@ -47,11 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
       if (result.success) {
         await _refreshNotes();
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(result.message!),
-          ),
-        );
+        showSnackBar(result.message!);
       }
     }
   }
@@ -64,18 +60,18 @@ class _HomeScreenState extends State<HomeScreen> {
     final result = await _service.export(widget.userId, folder);
 
     if (result.success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('File exported successfully to $folder/notes.json'),
-        ),
-      );
+      showSnackBar('File exported successfully to $folder/notes.json');
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(result.message!),
-        ),
-      );
+      showSnackBar(result.message!);
     }
+  }
+
+  void showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+      ),
+    );
   }
 
   void _showOptions(BuildContext context) {
@@ -93,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => NoteEditScreen(
+                      builder: (context) => NotePage(
                         userId: widget.userId,
                         db: widget._db,
                       ),
@@ -181,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => NoteEditScreen(
+                        builder: (context) => NotePage(
                           userId: widget.userId,
                           note: _notes[index],
                           db: widget._db,
