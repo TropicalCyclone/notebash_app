@@ -1,8 +1,8 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:intl/intl.dart';
 import 'package:notebash_app/components/note_actions.dart';
+import 'package:notebash_app/components/note_item.dart';
 import 'package:notebash_app/models/note.dart';
 import 'package:notebash_app/pages/note_entry_page.dart';
 import 'package:notebash_app/services/note_service.dart';
@@ -152,33 +152,30 @@ class _NotesPageState extends State<NotesPage> {
                   const SizedBox(width: 10),
                 ],
               ),
-              body: ListView.builder(
+              body: ListView.separated(
+                physics: const BouncingScrollPhysics(),
+                shrinkWrap: true,
+                padding: const EdgeInsets.all(10),
                 itemCount: _notes.length,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => NoteEntryPage(
-                          userId: widget.userId,
-                          db: widget._db,
-                          note: _notes[index],
-                          onSave: () async {
-                            await _load();
-                            setState(() {});
-                          },
-                        ),
+                itemBuilder: (context, index) => NoteItem(
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => NoteEntryPage(
+                        userId: widget.userId,
+                        db: widget._db,
+                        note: _notes[index],
+                        onSave: () async {
+                          await _load();
+                          setState(() {});
+                        },
                       ),
                     ),
-                    child: Card(
-                      margin: const EdgeInsets.all(8.0),
-                      child: ListTile(
-                        title: Text(_notes[index].description),
-                        subtitle: Text(DateFormat.yMMMd()
-                            .format(_notes[index].dateCreated)),
-                      ),
-                    ),
-                  );
+                  ),
+                  note: _notes[index],
+                ),
+                separatorBuilder: (BuildContext context, int index) {
+                  return const SizedBox(height: 10);
                 },
               ),
               floatingActionButton: FloatingActionButton(

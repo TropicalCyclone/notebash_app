@@ -3,7 +3,7 @@ class Note {
   final int userId;
   final String title;
   final String description;
-  final String color;
+  final int color;
   final DateTime dateCreated;
 
   Note({
@@ -39,7 +39,7 @@ class Note {
     int? userId,
     String? title,
     String? description,
-    String? color,
+    int? color,
     DateTime? dateCreated,
   }) {
     return Note(

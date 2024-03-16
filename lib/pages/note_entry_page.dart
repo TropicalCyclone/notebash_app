@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:notebash_app/components/note_color.dart';
 import 'package:notebash_app/models/note.dart';
 import 'package:notebash_app/services/note_service.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -24,6 +25,7 @@ class NoteEntryPage extends StatefulWidget {
 
 class _NoteEntryPageState extends State<NoteEntryPage> {
   late NoteService _service;
+  int? _selectedColor;
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
@@ -42,7 +44,12 @@ class _NoteEntryPageState extends State<NoteEntryPage> {
       _descriptionController.clear();
     }
 
+    _selectedColor = widget.note?.color;
     _errorMessage = '';
+  }
+
+  void _onColorChanged(int color) {
+    _selectedColor = color;
   }
 
   Future<void> _saveNote() async {
@@ -57,7 +64,7 @@ class _NoteEntryPageState extends State<NoteEntryPage> {
       userId: widget.userId,
       title: _titleController.text,
       description: _descriptionController.text,
-      color: '#000000',
+      color: _selectedColor ?? 0XFFDFE2EB,
       dateCreated: DateTime.now(),
     );
     await _service.add(note);
@@ -80,7 +87,7 @@ class _NoteEntryPageState extends State<NoteEntryPage> {
         userId: widget.userId,
         title: _titleController.text,
         description: _descriptionController.text,
-        color: '#000000',
+        color: _selectedColor ?? 0XFFDFE2EB,
         dateCreated: DateTime.now(),
       );
       await _service.update(note);
@@ -248,6 +255,21 @@ class _NoteEntryPageState extends State<NoteEntryPage> {
                     borderRadius: BorderRadius.all(Radius.circular(8)),
                   ),
                 ),
+              ),
+              const SizedBox(height: 10.0),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Paper Color",
+                  style: theme.textTheme.bodyMedium,
+                ),
+              ),
+              const SizedBox(height: 10.0),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: NoteColor(
+                    selectedColor: widget.note?.color,
+                    onColorChanged: _onColorChanged),
               ),
               const SizedBox(height: 40.0),
               SizedBox(

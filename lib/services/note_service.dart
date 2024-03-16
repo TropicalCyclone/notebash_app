@@ -21,6 +21,7 @@ class NoteService {
   Future<List<Note>> getByUserId(int userId) async {
     final List<Map<String, dynamic>> res = await db.query(
       'notes',
+      orderBy: 'date_created DESC',
       where: 'user_id = ?',
       whereArgs: [userId],
     );

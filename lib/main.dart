@@ -48,6 +48,7 @@ class _NoteBashAppState extends State<NoteBashApp> {
       title: 'NoteBash',
       theme: ThemeData(
               fontFamily: "Plus Jakarta Sans",
+              primaryColor: Colors.blue,
               colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
               useMaterial3: true)
           .copyWith(
