@@ -89,17 +89,15 @@ class _HomePageState extends State<HomePage> {
             color: Colors.blue[400],
             icon: "assets/images/pen.svg",
             label: "Quick Notes",
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => NotesPage(
-                    userId: widget.userId,
-                    db: widget._db,
-                  ),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => NotesPage(
+                  userId: widget.userId,
+                  db: widget._db,
                 ),
-              );
-            },
+              ),
+            ),
           ),
           HomeIcon(
             color: Colors.blue[500],

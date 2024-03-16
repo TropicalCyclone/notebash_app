@@ -1,10 +1,10 @@
-import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
-import 'package:notebash_app/components/note_entry.dart';
+import 'package:notebash_app/components/note_actions.dart';
 import 'package:notebash_app/models/note.dart';
+import 'package:notebash_app/pages/note_entry_page.dart';
 import 'package:notebash_app/services/note_service.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -56,30 +56,17 @@ class _NotesPageState extends State<NotesPage> {
     );
   }
 
-  Future<void> _importNote() async {
-    FilePickerResult? fileResult = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['json'],
-    );
-
-    if (fileResult != null) {
-      final file = File(fileResult.files.single.path!);
-      final contents = await file.readAsString();
-      final result = await _service.import(contents);
-      if (result.success) {
-        await _load();
-        _showSnackBar('Notes imported successfully');
-      } else {
-        _showSnackBar(result.message!);
-      }
+  Future<void> onImport(String contents) async {
+    final result = await _service.import(contents);
+    if (result.success) {
+      await _load();
+      _showSnackBar('Notes imported successfully');
+    } else {
+      _showSnackBar(result.message!);
     }
   }
 
-  void _popNavigation() {
-    Navigator.pop(context);
-  }
-
-  void _showOptions(BuildContext context, [bool edit = false, Note? note]) {
+  void _showOptions(BuildContext context) {
     showModalBottomSheet<dynamic>(
       context: context,
       isScrollControlled: true,
@@ -89,68 +76,15 @@ class _NotesPageState extends State<NotesPage> {
           topStart: Radius.circular(15),
         ),
       ),
-      builder: (context) => Wrap(
-        children: [
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                height: 6,
-                width: 40,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
-                  borderRadius: BorderRadius.circular(3),
-                ),
-              ),
-            ),
-          ),
-          Stack(
-            children: [
-              Center(
-                child: SizedBox(
-                  height: 40,
-                  child: Center(
-                    child: Text(
-                      edit ? 'Update Note' : 'Add Note',
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleMedium!
-                          .copyWith(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-              ),
-              if (!edit)
-                Positioned(
-                  right: 20,
-                  top: 0,
-                  height: 40,
-                  width: 40,
-                  child: SizedBox(
-                    height: 40,
-                    width: 40,
-                    child: IconButton(
-                      onPressed: () async {
-                        await _importNote();
-                        _popNavigation();
-                        setState(() {});
-                      },
-                      icon: const Icon(Icons.download),
-                    ),
-                  ),
-                )
-            ],
-          ),
-          NoteEntry(
-            db: widget._db,
+      builder: (context) => NoteActions(
+        noteEntryPage: NoteEntryPage(
             userId: widget.userId,
-            note: note,
+            db: widget._db,
             onSave: () async {
               await _load();
               setState(() {});
-            },
-          ),
-        ],
+            }),
+        onImport: (contents) => onImport(contents),
       ),
     );
   }
@@ -222,7 +156,20 @@ class _NotesPageState extends State<NotesPage> {
                 itemCount: _notes.length,
                 itemBuilder: (context, index) {
                   return GestureDetector(
-                    onTap: () => _showOptions(context, true, _notes[index]),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => NoteEntryPage(
+                          userId: widget.userId,
+                          db: widget._db,
+                          note: _notes[index],
+                          onSave: () async {
+                            await _load();
+                            setState(() {});
+                          },
+                        ),
+                      ),
+                    ),
                     child: Card(
                       margin: const EdgeInsets.all(8.0),
                       child: ListTile(

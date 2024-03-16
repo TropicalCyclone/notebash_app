@@ -189,16 +189,14 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
               ),
               const SizedBox(height: 40.0),
-              TextButton(
-                onPressed: () async => await _register(),
-                child: const SizedBox(
-                  width: double.infinity,
-                  child: Padding(
-                    padding: EdgeInsets.all(10.0),
-                    child: Text(
-                      'Register',
-                      textAlign: TextAlign.center,
-                    ),
+              SizedBox(
+                width: double.infinity,
+                height: 40,
+                child: TextButton(
+                  onPressed: () async => await _register(),
+                  child: const Text(
+                    'Register',
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ),
