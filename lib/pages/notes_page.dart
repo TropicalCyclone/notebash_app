@@ -60,6 +60,7 @@ class _NotesPageState extends State<NotesPage> {
     final result = await _service.import(contents);
     if (result.success) {
       await _load();
+      setState(() {});
       _showSnackBar('Notes imported successfully');
     } else {
       _showSnackBar(result.message!);
