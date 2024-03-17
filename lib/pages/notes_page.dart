@@ -36,6 +36,11 @@ class _NotesPageState extends State<NotesPage> {
   }
 
   Future<void> _exportNotes() async {
+    if (!await tryGrantPermission()) {
+      if (mounted) showSnackBar(context, "Access denied", error: true);
+      return;
+    }
+
     String? folder = await FilePicker.platform.getDirectoryPath();
 
     if (folder == null) return;

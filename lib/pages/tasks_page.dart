@@ -40,6 +40,11 @@ class _TasksPageState extends State<TasksPage> {
   }
 
   Future<void> _exportTasks() async {
+    if (!await tryGrantPermission()) {
+      if (mounted) showSnackBar(context, "Access denied", error: true);
+      return;
+    }
+
     String? folder = await FilePicker.platform.getDirectoryPath();
 
     if (folder == null) return;

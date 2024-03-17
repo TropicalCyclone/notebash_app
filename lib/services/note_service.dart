@@ -53,9 +53,7 @@ class NoteService {
       List<Map<String, dynamic>> list =
           notes.map((note) => note.toMap()).toList();
 
-      final filePath = '$folder/notes.json';
-      final exportFile = File(filePath);
-
+      final exportFile = File('$folder/notes.json');
       await exportFile.writeAsString(json.encode(list));
 
       return ActionResult(success: true, data: list);
