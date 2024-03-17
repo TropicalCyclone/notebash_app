@@ -6,7 +6,7 @@ A simple app for note taking and task management.
 
 - [x] Quick Notes
       Enables you to quickly take notes
-- [ ] Tasks
+- [x] Tasks
       Enables you to manage tasks and todo's
 - [ ] Movies
       Enables you to manage movies you want to watch
