@@ -6,6 +6,7 @@ import 'package:notebash_app/components/note_item.dart';
 import 'package:notebash_app/models/note.dart';
 import 'package:notebash_app/pages/note_entry_page.dart';
 import 'package:notebash_app/services/note_service.dart';
+import 'package:notebash_app/utils/helpers.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class NotesPage extends StatefulWidget {
@@ -42,18 +43,13 @@ class _NotesPageState extends State<NotesPage> {
     final result = await _service.export(widget.userId, folder);
 
     if (result.success) {
-      _showSnackBar('File exported successfully to $folder/notes.json');
+      if (mounted) {
+        showSnackBar(
+            context, 'File exported successfully to $folder\\notes.json');
+      }
     } else {
-      _showSnackBar(result.message!);
+      if (mounted) showSnackBar(context, result.message!, error: true);
     }
-  }
-
-  void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-      ),
-    );
   }
 
   Future<void> onImport(String contents) async {
@@ -61,9 +57,9 @@ class _NotesPageState extends State<NotesPage> {
     if (result.success) {
       await _load();
       setState(() {});
-      _showSnackBar('Notes imported successfully');
+      if (mounted) showSnackBar(context, 'Notes imported successfully');
     } else {
-      _showSnackBar(result.message!);
+      if (mounted) showSnackBar(context, result.message!, error: true);
     }
   }
 
