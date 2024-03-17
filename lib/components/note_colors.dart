@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 
-class NoteColor extends StatefulWidget {
+class NoteColors extends StatefulWidget {
   final int? selectedColor;
   final void Function(int color) onColorChanged;
-  const NoteColor({
+  const NoteColors({
     super.key,
     this.selectedColor,
     required this.onColorChanged,
   });
 
   @override
-  State<NoteColor> createState() => _NoteColorState();
+  State<NoteColors> createState() => _NoteColorsState();
 }
 
-class _NoteColorState extends State<NoteColor> {
+class _NoteColorsState extends State<NoteColors> {
   final List<int> _colors = [
     0XFFDFE2EB,
     0XFFBFE5FF,

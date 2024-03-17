@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:notebash_app/components/note_color.dart';
+import 'package:notebash_app/components/note_colors.dart';
 import 'package:notebash_app/models/note.dart';
 import 'package:notebash_app/services/note_service.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -267,7 +267,7 @@ class _NoteEntryPageState extends State<NoteEntryPage> {
               const SizedBox(height: 10.0),
               Align(
                 alignment: Alignment.centerLeft,
-                child: NoteColor(
+                child: NoteColors(
                     selectedColor: widget.note?.color,
                     onColorChanged: _onColorChanged),
               ),
