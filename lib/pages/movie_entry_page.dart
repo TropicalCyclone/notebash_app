@@ -54,22 +54,7 @@ class _MovieEntryPageState extends State<MovieEntryPage> {
   }
 
   Future<void> _saveMovie() async {
-    if (int.tryParse(_yearController.text) == null) {
-      setState(() {
-        _yearError = 'Year must be a number';
-      });
-      return;
-    }
-
-    if (_titleController.text.isEmpty ||
-        _yearController.text.isEmpty ||
-        _genreController.text.isEmpty ||
-        _linkController.text.isEmpty) {
-      setState(() {
-        _errorMessage = 'All fields are required';
-      });
-      return;
-    }
+    if (!validateEntries()) return;
 
     final movie = Movie(
       userId: widget.userId,
@@ -84,7 +69,14 @@ class _MovieEntryPageState extends State<MovieEntryPage> {
     _showSnackBar('Movie has been added');
   }
 
-  Future<void> _updateMovie() async {
+  bool validateEntries() {
+    if (int.tryParse(_yearController.text) == null) {
+      setState(() {
+        _yearError = 'Invalid value';
+      });
+      return false;
+    }
+
     if (_titleController.text.isEmpty ||
         _yearController.text.isEmpty ||
         _genreController.text.isEmpty ||
@@ -92,17 +84,16 @@ class _MovieEntryPageState extends State<MovieEntryPage> {
       setState(() {
         _errorMessage = 'All fields are required';
       });
-      return;
+      return false;
     }
 
-    if (widget.movie != null) {
-      if (int.tryParse(_yearController.text) == null) {
-        setState(() {
-          _yearError = 'Invalid value';
-        });
-        return;
-      }
+    return true;
+  }
 
+  Future<void> _updateMovie() async {
+    if (!validateEntries()) return;
+
+    if (widget.movie != null) {
       final movie = Movie(
         id: widget.movie!.id,
         userId: widget.userId,
