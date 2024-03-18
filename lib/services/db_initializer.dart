@@ -22,5 +22,8 @@ Future<Database> initDb() async {
     await db.execute(
       "CREATE TABLE books(id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, title TEXT, year_published INTEGER, authors TEXT);",
     );
+    await db.execute(
+      "CREATE TABLE musics(id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, title TEXT, artist TEXT, album TEXT, album_art TEXT, url TEXT);",
+    );
   }, version: 1);
 }

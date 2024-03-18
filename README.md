@@ -12,7 +12,7 @@ A simple app for note taking and task management.
       Enables you to manage movies you want to watch
 - [x] Books
       Enables you to manage books you want to read
-- [ ] Music
+- [x] Music
       Enables you to manage music you want to listen to
 - [ ] Recipes
       Enables you to manage recipes you want to try

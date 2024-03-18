@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -28,5 +29,7 @@ Future<bool> tryGrantPermission() async {
   if (!status.isGranted) {
     status = await Permission.manageExternalStorage.request();
   }
+
+  log(status.isGranted.toString());
   return status.isGranted;
 }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:notebash_app/pages/books_page.dart';
 import 'package:notebash_app/pages/login_page.dart';
 import 'package:notebash_app/pages/movies_page.dart';
+import 'package:notebash_app/pages/musics_page.dart';
 import 'package:notebash_app/pages/notes_page.dart';
 import 'package:notebash_app/pages/tasks_page.dart';
 import 'package:notebash_app/services/log_service.dart';
@@ -148,7 +149,15 @@ class _HomePageState extends State<HomePage> {
             color: Colors.blue[800],
             icon: "assets/images/music.svg",
             label: "Musics",
-            onTap: () => print("Musics"),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MusicsPage(
+                  userId: widget.userId,
+                  db: widget._db,
+                ),
+              ),
+            ),
           ),
           HomeIcon(
             color: Colors.blue[900],
