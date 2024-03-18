@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 class NoteColors extends StatefulWidget {
   final int? selectedColor;
   final void Function(int color) onColorChanged;
+
+  final List<int> colors;
   const NoteColors({
     super.key,
     this.selectedColor,
+    required this.colors,
     required this.onColorChanged,
   });
 
