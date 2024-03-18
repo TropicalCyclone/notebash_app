@@ -16,5 +16,8 @@ Future<Database> initDb() async {
     await db.execute(
       "CREATE TABLE tasks(id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, name TEXT, is_done INTEGER, date_created TEXT);",
     );
+    await db.execute(
+      "CREATE TABLE movies(id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, title TEXT, year INTEGER, genre TEXT, link TEXT);",
+    );
   }, version: 1);
 }
