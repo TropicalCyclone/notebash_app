@@ -125,69 +125,70 @@ class _MoviesPageState extends State<MoviesPage> {
           );
         } else {
           return Scaffold(
-              appBar: AppBar(
-                title: Row(
-                  children: [
-                    SizedBox(
-                      child: SvgPicture.asset(
-                        "assets/images/clapper.svg",
-                        semanticsLabel: "Movies",
-                        colorFilter: ColorFilter.mode(
-                          Colors.grey[700]!,
-                          BlendMode.srcIn,
-                        ),
+            appBar: AppBar(
+              title: Row(
+                children: [
+                  SizedBox(
+                    child: SvgPicture.asset(
+                      "assets/images/clapper.svg",
+                      semanticsLabel: "Movies",
+                      colorFilter: ColorFilter.mode(
+                        Colors.grey[700]!,
+                        BlendMode.srcIn,
                       ),
                     ),
-                    const SizedBox(width: 5.0),
-                    const Text('Movies'),
-                  ],
-                ),
-                leading: IconButton(
-                  onPressed: () => {Navigator.pop(context)},
-                  icon: const Icon(Icons.chevron_left),
-                ),
-                actions: [
-                  IconButton(
-                    onPressed: _movies.isEmpty ? null : () => _exportMovies(),
-                    icon: const Icon(Icons.upload),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: 5.0),
+                  const Text('Movies'),
                 ],
               ),
-              body: ListView.separated(
-                physics: const BouncingScrollPhysics(),
-                shrinkWrap: true,
-                padding: const EdgeInsets.all(10),
-                itemCount: _movies.length,
-                itemBuilder: (context, index) => MovieItem(
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => MovieEntryPage(
-                        userId: widget.userId,
-                        db: widget._db,
-                        movie: _movies[index],
-                        onSave: () async {
-                          await _load();
-                          setState(() {});
-                        },
-                      ),
+              leading: IconButton(
+                onPressed: () => {Navigator.pop(context)},
+                icon: const Icon(Icons.chevron_left),
+              ),
+              actions: [
+                IconButton(
+                  onPressed: _movies.isEmpty ? null : () => _exportMovies(),
+                  icon: const Icon(Icons.upload),
+                ),
+                const SizedBox(width: 10),
+              ],
+            ),
+            body: ListView.separated(
+              physics: const BouncingScrollPhysics(),
+              shrinkWrap: true,
+              padding: const EdgeInsets.all(10),
+              itemCount: _movies.length,
+              itemBuilder: (context, index) => MovieItem(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MovieEntryPage(
+                      userId: widget.userId,
+                      db: widget._db,
+                      movie: _movies[index],
+                      onSave: () async {
+                        await _load();
+                        setState(() {});
+                      },
                     ),
                   ),
-                  movie: _movies[index],
                 ),
-                separatorBuilder: (BuildContext context, int index) {
-                  return const SizedBox(height: 10);
-                },
+                movie: _movies[index],
               ),
-              floatingActionButton: FloatingActionButton(
-                backgroundColor: theme.colorScheme.primary,
-                foregroundColor: Colors.white,
-                elevation: 2,
-                shape: const CircleBorder(),
-                onPressed: () => _showOptions(context),
-                child: const Icon(Icons.add),
-              ));
+              separatorBuilder: (BuildContext context, int index) {
+                return const SizedBox(height: 10);
+              },
+            ),
+            floatingActionButton: FloatingActionButton(
+              backgroundColor: theme.colorScheme.primary,
+              foregroundColor: Colors.white,
+              elevation: 2,
+              shape: const CircleBorder(),
+              onPressed: () => _showOptions(context),
+              child: const Icon(Icons.add),
+            ),
+          );
         }
       },
     );

@@ -3,7 +3,7 @@ import 'package:notebash_app/components/home_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:notebash_app/pages/books_page.dart';
 import 'package:notebash_app/pages/login_page.dart';
-import 'package:notebash_app/pages/movie_page.dart';
+import 'package:notebash_app/pages/movies_page.dart';
 import 'package:notebash_app/pages/notes_page.dart';
 import 'package:notebash_app/pages/tasks_page.dart';
 import 'package:notebash_app/services/log_service.dart';
