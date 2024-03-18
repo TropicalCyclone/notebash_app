@@ -14,7 +14,7 @@ A simple app for note taking and task management.
       Enables you to manage books you want to read
 - [x] Music
       Enables you to manage music you want to listen to
-- [ ] Recipes
+- [x] Recipes
       Enables you to manage recipes you want to try
 - [ ] Travel
       Enables you to manage travel plans

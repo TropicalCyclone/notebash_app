@@ -6,6 +6,7 @@ import 'package:notebash_app/pages/login_page.dart';
 import 'package:notebash_app/pages/movies_page.dart';
 import 'package:notebash_app/pages/musics_page.dart';
 import 'package:notebash_app/pages/notes_page.dart';
+import 'package:notebash_app/pages/recipes_page.dart';
 import 'package:notebash_app/pages/tasks_page.dart';
 import 'package:notebash_app/services/log_service.dart';
 import 'package:sqflite/sqflite.dart';
@@ -163,7 +164,15 @@ class _HomePageState extends State<HomePage> {
             color: Colors.blue[900],
             icon: "assets/images/chef.svg",
             label: "Recipes",
-            onTap: () => print("Recipes"),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => RecipesPage(
+                  userId: widget.userId,
+                  db: widget._db,
+                ),
+              ),
+            ),
           ),
           HomeIcon(
             color: const Color.fromRGBO(11, 61, 140, 1),
