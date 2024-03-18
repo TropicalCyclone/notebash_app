@@ -1,6 +1,7 @@
 import 'package:flutter_svg/svg.dart';
 import 'package:notebash_app/components/home_icon.dart';
 import 'package:flutter/material.dart';
+import 'package:notebash_app/pages/books_page.dart';
 import 'package:notebash_app/pages/login_page.dart';
 import 'package:notebash_app/pages/movie_page.dart';
 import 'package:notebash_app/pages/notes_page.dart';
@@ -133,7 +134,15 @@ class _HomePageState extends State<HomePage> {
             color: Colors.blue[700],
             icon: "assets/images/book.svg",
             label: "Books",
-            onTap: () => print("Books"),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => BooksPage(
+                  userId: widget.userId,
+                  db: widget._db,
+                ),
+              ),
+            ),
           ),
           HomeIcon(
             color: Colors.blue[800],

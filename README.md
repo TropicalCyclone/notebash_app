@@ -10,7 +10,7 @@ A simple app for note taking and task management.
       Enables you to manage tasks and todo's
 - [x] Movies
       Enables you to manage movies you want to watch
-- [ ] Books
+- [x] Books
       Enables you to manage books you want to read
 - [ ] Music
       Enables you to manage music you want to listen to
