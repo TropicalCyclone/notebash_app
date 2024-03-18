@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:notebash_app/models/action_result.dart';
-import 'package:notebash_app/models/movie.dart' as model;
 import 'package:notebash_app/models/movie.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -10,7 +9,7 @@ class MovieService {
 
   MovieService({required this.db});
 
-  Future<model.Movie> add(Movie movie) async {
+  Future<Movie> add(Movie movie) async {
     final id = await db.insert(
       'movies',
       movie.toMap(),
@@ -19,17 +18,17 @@ class MovieService {
     return movie.copy(id: id);
   }
 
-  Future<List<model.Movie>> getByUserId(int userId) async {
+  Future<List<Movie>> getByUserId(int userId) async {
     final List<Map<String, dynamic>> res = await db.query(
       'movies',
       orderBy: 'year DESC, title ASC',
       where: 'user_id = ?',
       whereArgs: [userId],
     );
-    return res.map((e) => model.Movie.fromMap(e)).toList();
+    return res.map((e) => Movie.fromMap(e)).toList();
   }
 
-  Future<model.Movie> update(model.Movie movie) async {
+  Future<Movie> update(Movie movie) async {
     await db.update(
       'movies',
       movie.toMap(),
@@ -50,7 +49,7 @@ class MovieService {
 
   Future<ActionResult> export(int userId, String folder) async {
     try {
-      final List<model.Movie> movies = await getByUserId(userId);
+      final List<Movie> movies = await getByUserId(userId);
       List<Map<String, dynamic>> list =
           movies.map((movie) => movie.toMap()).toList();
 
@@ -69,7 +68,7 @@ class MovieService {
     try {
       final List<dynamic> decodedList = json.decode(content);
       for (var item in decodedList) {
-        final movie = model.Movie(
+        final movie = Movie(
             id: item['id'],
             userId: item['user_id'],
             title: item['title'],

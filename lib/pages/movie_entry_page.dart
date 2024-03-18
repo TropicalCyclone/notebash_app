@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:notebash_app/models/movie.dart' as model;
+import 'package:notebash_app/models/movie.dart';
 import 'package:notebash_app/services/movie_service.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -8,7 +8,7 @@ class MovieEntryPage extends StatefulWidget {
   final int userId;
   final VoidCallback onSave;
   final Database db;
-  final model.Movie? movie;
+  final Movie? movie;
 
   const MovieEntryPage({
     super.key,
@@ -71,7 +71,7 @@ class _MovieEntryPageState extends State<MovieEntryPage> {
       return;
     }
 
-    final movie = model.Movie(
+    final movie = Movie(
       userId: widget.userId,
       title: _titleController.text,
       year: int.parse(_yearController.text),
@@ -103,7 +103,7 @@ class _MovieEntryPageState extends State<MovieEntryPage> {
         return;
       }
 
-      final movie = model.Movie(
+      final movie = Movie(
         id: widget.movie!.id,
         userId: widget.userId,
         title: _titleController.text,
