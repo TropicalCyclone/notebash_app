@@ -8,6 +8,7 @@ import 'package:notebash_app/pages/musics_page.dart';
 import 'package:notebash_app/pages/notes_page.dart';
 import 'package:notebash_app/pages/recipes_page.dart';
 import 'package:notebash_app/pages/tasks_page.dart';
+import 'package:notebash_app/pages/travels_page.dart';
 import 'package:notebash_app/services/log_service.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -178,7 +179,15 @@ class _HomePageState extends State<HomePage> {
             color: const Color.fromRGBO(11, 61, 140, 1),
             icon: "assets/images/plane.svg",
             label: "Travels",
-            onTap: () => print("Travels"),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => TravelsPage(
+                  userId: widget.userId,
+                  db: widget._db,
+                ),
+              ),
+            ),
           ),
           HomeIcon(
             color: const Color.fromRGBO(9, 47, 110, 1),

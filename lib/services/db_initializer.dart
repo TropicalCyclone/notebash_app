@@ -28,5 +28,8 @@ Future<Database> initDb() async {
     await db.execute(
       "CREATE TABLE recipes(id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, name TEXT, ingredients TEXT, directions TEXT, color INTEGER);",
     );
+    await db.execute(
+      "CREATE TABLE travels(id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, destination TEXT, travel_date TEXT);",
+    );
   }, version: 1);
 }
