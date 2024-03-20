@@ -58,7 +58,8 @@ class TravelService {
 
       return ActionResult(success: true, data: list);
     } catch (e) {
-      return ActionResult(success: false, message: 'Failed to export notes');
+      return ActionResult(
+          success: false, message: 'Failed to export travel destinations');
     }
   }
 
@@ -73,7 +74,8 @@ class TravelService {
 
       return ActionResult(success: true);
     } catch (e) {
-      return ActionResult(success: false, message: 'Failed to import notes');
+      return ActionResult(
+          success: false, message: 'Failed to import travel destinations');
     }
   }
 }
