@@ -2,6 +2,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:notebash_app/components/home_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:notebash_app/pages/books_page.dart';
+import 'package:notebash_app/pages/expenses_page.dart';
 import 'package:notebash_app/pages/login_page.dart';
 import 'package:notebash_app/pages/movies_page.dart';
 import 'package:notebash_app/pages/musics_page.dart';
@@ -193,7 +194,15 @@ class _HomePageState extends State<HomePage> {
             color: const Color.fromRGBO(9, 47, 110, 1),
             icon: "assets/images/coins.svg",
             label: "Expenses",
-            onTap: () => print("Expenses"),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ExpensesPage(
+                  userId: widget.userId,
+                  db: widget._db,
+                ),
+              ),
+            ),
           ),
         ],
       ),

@@ -31,5 +31,8 @@ Future<Database> initDb() async {
     await db.execute(
       "CREATE TABLE travels(id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, destination TEXT, travel_date TEXT);",
     );
+    await db.execute(
+      "CREATE TABLE expenses(id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, category TEXT, amount REAL, date TEXT);",
+    );
   }, version: 1);
 }
